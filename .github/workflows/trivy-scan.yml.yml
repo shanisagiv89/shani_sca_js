@@ -1,0 +1,40 @@
+# .github/workflows/trivy-scan.yml
+
+name: 'Trivy FS Scan'
+
+on:
+  push:
+    branches:
+      - main # Scans on push to the main branch
+  pull_request:
+    branches:
+      - main # Also scans on pull requests targeting the main branch
+
+jobs:
+  trivy_scan:
+    name: Trivy Filesystem Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out your repository's code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Step 2: Run the Trivy action to scan the filesystem
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          # Scan type
+          scan-type: 'fs' # Filesystem scan
+          
+          # What to scan - '.' means the entire repository
+          scan-ref: '.'
+          
+          # Severity levels to report on (comma-separated)
+          severity: 'CRITICAL,HIGH'
+          
+          # Action will fail if vulnerabilities of this level are found
+          exit-code: '1'
+
+          # Output format (table is default)
+          format: 'table'
